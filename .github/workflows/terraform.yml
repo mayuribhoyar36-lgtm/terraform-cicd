@@ -1,0 +1,29 @@
+name: terraform-infra-pipeline
+
+on: 
+  push:
+    branches:
+      -main
+
+jobs:
+  terraform:
+    runs-on: "ubuntu-latest"              
+    env:
+      AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+      
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+            
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v3
+            
+      - name: Terarform Init
+        run: terraform init
+        
+      - name: Terarform plan
+        run: terraform plan  -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve  tfplan
